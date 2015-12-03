@@ -57,11 +57,12 @@ let op = NSCompositingOperation.CompositeCopy
 let f = CGFloat(1.0)
 
 // draw the image not the imageRep
-let r = CGRectMake(0, 0, CGFloat(n), CGFloat(n))
+let dst = CGRectMake(0, 0, CGFloat(sz), CGFloat(sz))
+let src = CGRectMake(0, 0, CGFloat(n), CGFloat(n))
 
-img.drawAtPoint(
-    NSZeroPoint,
-    fromRect: r,
+img.drawInRect(
+    dst,
+    fromRect: src,
     operation: op,
     fraction: f)
 

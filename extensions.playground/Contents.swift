@@ -1,20 +1,22 @@
 extension String {
     private func divide(s: String, n: Int) -> [String] {
         var ret = [String]()
-        var current = s
+        var current = s.characters
         while true {
-            let m = current.characters.count
+            let m = current.count
             if m == 0 {
                 break
             }
             if m < n {
-                ret.append(current)
+                ret.append(String(current))
                 break
             }
-            let i = current.startIndex.advancedBy(n)
-            let front = current.substringToIndex(i)
-            ret.append(front)
-            current = current.substringFromIndex(i)
+            let i = current.startIndex
+            let j = i.advancedBy(n)
+            let k = current.endIndex
+            let front = current[Range(start: i, end: j)]
+            ret.append(String(front))
+            current = current[Range(start: j, end: k)]
         }
         return ret
     }
@@ -38,8 +40,10 @@ extension String {
         let r = self.characters.split() {$0 == "\n"}.map{String($0)}
         return r.joinWithSeparator("")
     }
-    
 }
+
+let ret = "abcd".withNewlines(every: 2)
+ret.withoutNewlines()
 
 
 

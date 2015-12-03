@@ -14,9 +14,7 @@ extension String {
         let pad = String(count: extra, repeatedValue: Character("-"))
         return pad + self
     }
-}
 
-extension String {
     func ljust(n: Int) -> String {
         let length = self.characters.count
         let extra = n - length
@@ -26,9 +24,7 @@ extension String {
         let pad = String(count: extra, repeatedValue: Character("-"))
         return self + pad
     }
-}
 
-extension String {
     func just(n: Int) -> String {
         let length = self.characters.count
         let extra = n - length

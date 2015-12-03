@@ -6,14 +6,27 @@ var a = Array(1..<10)
 swap(&a[1],&a[2])
 a
 
-// value semantics, return the sorted copy
 
+a = a.reverse()
 a
-a = a.sort()
+
+let b = a.sort()
 a
+b
+
+a.sort(>)
+a
+
+a.sort(<)
+a
+
+a.sortInPlace(<)
+a
+
+
+
 
 Range(start:0, end:4)
-
 
 func random_shuffle(inout a: [Int]) -> [Int] {
     let n = a.count
@@ -63,8 +76,8 @@ extension MutableCollectionType where Index == Int {
 
 a.sort()
 a.shuffle()
-var b = ["Joe","Bob","Tom"]
-b.shuffle()
+var c = ["Joe","Bob","Tom"]
+c.shuffle()
 
 
 arc4random_uniform(UInt32.max)

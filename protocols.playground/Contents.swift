@@ -1,78 +1,80 @@
-// protocol lists functions or required properties
-
-protocol Incrementable {
-    func addOne()
-}
-
-class X: Incrementable {
-    var i = 1
-    func addOne() {
-        i += 1
+class X1: CustomStringConvertible {
+    
+    var description: String {
+        get {
+            return "Hi there"
+        }
     }
 }
 
-var x = X()
-x.i
-x.addOne()
-x.i
+let x1 = X1()
+print(x1)
 
+//-------------------------------
 
+/*
+http://stackoverflow.com/questions/32668635/swift-minimum-implementation-for-types-conforming-to-protocols-with-default-impl
 
+Three properties comprise methods needed for Indexable
+That is also the minimum required to be a CollectionType
+To be MutableCollectionType, subscript needs a setter
+*/
 
-
-
-
-struct Complex<T: SignedNumberType> {
-    let real: T
-    let imaginary: T
-}
-
-extension Complex: Equatable {}
-
-// MARK: Equatable
-
-func ==<T>(lhs: Complex<T>, rhs: Complex<T>) -> Bool {
-    return lhs.real == rhs.real && lhs.imaginary == rhs.imaginary
-}
-
-let a = Complex<Double>(real: 1.0, imaginary: 2.0)
-let b = Complex<Double>(real: 1.0, imaginary: 2.0)
-
-a == b // true
-a != b // false
-
-
-
-var things = [Any]()
-
-things.append(0)
-things.append(0.0)
-things.append(42)
-things.append(3.14159)
-things.append("hello")
-things.append((3.0, 5.0))
-things.append({ (name: String) -> String in "Hello, \(name)" })
-
-
-for thing in things {
-    switch thing {
-    case 0 as Int:
-        print("zero as an Int")
-    case 0 as Double:
-        print("zero as a Double")
-    case let someInt as Int:
-        print("an integer value of \(someInt)")
-    case let someDouble as Double where someDouble > 0:
-        print("a positive double value of \(someDouble)")
-    case is Double:
-        print("some other double value that I don't want to print")
-    case let someString as String:
-        print("a string value of \"\(someString)\"")
-    case let (x, y) as (Double, Double):
-        print("an (x, y) point at \(x), \(y)")
-    case let stringConverter as String -> String:
-        print(stringConverter("Michael"))
-    default:
-        print("something else")
+struct MyCollectionType : CollectionType {
+    
+    var startIndex : Int { return 0 }
+    var endIndex : Int { return 1 }
+    
+    subscript(position : Int) -> String {
+        return "I am element #\(position)"
     }
 }
+
+let coll = MyCollectionType()
+for elem in coll {
+    print(elem)
+}
+
+//-------------------------------
+
+// for GeneratorType example with MyList 
+// see: gen_protocols.playground
+
+struct MyList: CollectionType,
+               Indexable {
+    
+    var args: [String]
+    init(sL: [String]) {
+        self.args = sL
+    }
+    
+    mutating func append(s: String) {
+        args.append(s)
+    }
+    
+    var startIndex: Int { return 0 }
+    var endIndex : Int { return args.count }
+    
+    subscript(i : Int) -> String {
+        get {
+            return args[i]
+        }
+    }
+
+    subscript(range: Range<Int>) -> MyList? {
+        get {
+            // cannot subscript a value of type [MyList]
+            // why not?
+            let end = range.endIndex
+            var i = range.startIndex
+            var ret = MyList(sL: [])
+            while true {
+                if i == end { break }
+                ret.append(args[i])
+                i += 1
+            }
+            return ret
+        }
+    }
+}
+

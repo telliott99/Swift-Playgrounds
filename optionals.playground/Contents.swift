@@ -1,10 +1,30 @@
 import Cocoa
 
-let possibleString: String? = "An optional string."
-let forcedString: String = possibleString! // requires an exclamation mark
+let str: String?
+str = "a"
+if let x = str {
+    print(x)
+}
+str
 
-let assumedString: String! = possibleString
-let implicitString: String = assumedString // no need for an exclamation mark
+let optStr: String? = str
+// value is unwrapped!!
+optStr
+
+
+// ? is the declaration of an Optional
+let os: String? = "value"
+
+// requires an exclamation mark
+let s: String = os!
+
+/*
+“You can think of an implicitly unwrapped optional as giving permission for the optional to be unwrapped automatically whenever it is used.”
+*/
+
+let assumedString: String! = os
+let implicitString: String = assumedString
+implicitString
 
 
 

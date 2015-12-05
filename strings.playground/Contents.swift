@@ -59,6 +59,11 @@ result
 
 var sa = ["a","b"]
 let s2 = sa.joinWithSeparator("\n")
+
+// an alternative way to join an an array of Strings
+sa.reduce("", combine: +)
+
+
 print(s2)
 print(s2, terminator:"")
 
@@ -90,6 +95,23 @@ extension String {
 let bananaName = "Jimmy".banana
 
 
+print(s2, terminator:"")
+func printWithSepTerm(s: String,
+                      _ sep: String = "",
+                      _ term: String = "") {
+    var cL = s.characters
+    let n = cL.count
+    if n == 0 { return }
+                        
+    var a = [cL.removeFirst()]
+    for c in cL {
+        a.append(Character(sep))
+        a.append(c)
+    }
+    a.append(Character(term))
+    print(String(a), terminator:"")
+}
 
+printWithSepTerm("abc","*",".")
 
 

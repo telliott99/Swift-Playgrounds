@@ -65,15 +65,15 @@ containsCharacter(string: "aardvark", char: "v")
 // return a function from a function
 
 func adder(n: Int) -> (Int -> Int) {
-    func f(n:Int) -> Int {
-        return 1 + n
+    func f(m:Int) -> Int {
+        return n + m
     }
     return f
 }
 
 var addOne = adder(1)
 addOne(5)
-
+adder(2)(7)
 
 
 // ============

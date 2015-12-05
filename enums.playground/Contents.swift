@@ -104,6 +104,28 @@ enum Sun_Planet: Int {
 
 Sun_Planet.Earth.rawValue
 
+//========================
 
+// enums may have printable descriptions
+// don't forget CustomStringConvertible
+
+enum OnOff: CustomStringConvertible {
+    case No
+    case Yes
+    
+    var description: String {
+        get {
+            switch self {
+            case.No:
+                return "no way"
+            case.Yes:
+                return "yes, way"
+            }
+        }
+    }
+}
+
+let v = OnOff.No
+OnOff.Yes
 
 

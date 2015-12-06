@@ -1,25 +1,29 @@
 import Foundation
 
-func binaryFormat(a: [UInt8]) -> [String] {
+/*
+The basic data type is [UInt8]
+Conversions to and from that type are for display only
+*/
+
+typealias BinaryData = [UInt8]
+
+func binaryFormat(input: BinaryData) -> String {
+    let sa = input.map { NSString(format: "%x", $0) as String }
     var ret: [String] = []
-    for i in a {
-        var s = NSString(format: "%x", i) as String
-        if s.characters.count == 1 { s = "0" + s }
-        ret.append(s)
+    // couldn't figure this one out as map
+    for s in sa {
+        if s.characters.count == 1 { ret.append("0" + s) }
+        else { ret.append(s) }
     }
-    return ret
+    return ret.joinWithSeparator(" ")
 }
 
-func intArrayToString(a: [UInt8]) -> String {
-    var arr: [String] = []
-    for n in a {
-        let s = Character(UnicodeScalar(UInt32(n)))
-        arr.append(String(s))
-    }
-    return arr.joinWithSeparator("")
+func intArrayToString(input: BinaryData) -> String {
+    let ret = input.map { String(Character(UnicodeScalar(UInt32($0)))) }
+    return ret.joinWithSeparator("")
 }
 
-func stringToIntArray(s: String) -> [UInt8] {
+func stringToIntArray(s: String) -> BinaryData {
     return s.utf8.map{ UInt8($0) }
 }
 
@@ -28,9 +32,11 @@ class Encoder {
     let i: UInt32
     init(_ input: String) {
         key = input
+        // total hack, need String -> UInt32
         var n = Int(key.hashValue)
         if n < 0 { n *= -1 }
-        if n > Int(UInt32.max) { n = n % 20000000 }
+        let maxI = Int(UInt32.max)
+        if n >= maxI { n = n % maxI }
         i = UInt32(n)
         seed()
     }
@@ -41,44 +47,44 @@ class Encoder {
         return UInt8( Int(rand()) % 256 )
     }
     
-    func keyStream(length: Int) -> [UInt8] {
-        var arr: [UInt8] = []
+    func keyStream(length: Int) -> BinaryData {
+        var arr: BinaryData = []
         for _ in 0..<length {
             arr.append(self.next())
         }
     return arr
     }
     
-    func encrypt(u: [UInt8]) -> [UInt8] {
+    func xor(a1: BinaryData, _ a2: BinaryData) -> BinaryData {
+        return Zip2Sequence(a1,a2).map { $0^$1 }
+    }
+    
+    func encrypt(u: BinaryData) -> BinaryData {
         self.seed()
         let ks = self.keyStream(u.count)
-        var a: [UInt8] = []
-        for (p,k) in Zip2Sequence(u,ks) {
-            a.append(p^k)
-        }
-        return a
+        return xor(u,ks)
     }
 
-    func decrypt(a: [UInt8]) -> [UInt8] {
+    func decrypt(a: BinaryData) -> BinaryData {
         self.seed()
         let ks = self.keyStream(a.count)
-        var ret: [UInt8] = []
-        for (c,k) in Zip2Sequence(a,ks) {
-            ret.append(c^k)
-        }
-        return ret
+        return xor(a,ks)
     }
 }
 
-let enc = Encoder("myKey")
+let key = "Four score and seven years ago"
+let enc = Encoder(key)
 
 let plaintext = "MY SECRET"
 
 let p = stringToIntArray(plaintext)
-binaryFormat(p).joinWithSeparator(" ")
+binaryFormat(p)
 
 let ct = enc.encrypt(p)
+binaryFormat(ct)
+
 let result = enc.decrypt(ct)
+binaryFormat(result)
 
 intArrayToString(result)
 

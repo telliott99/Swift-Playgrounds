@@ -124,8 +124,7 @@ struct Person {
 var p = Person(name: "Tom", age: 60)
 print("\(p)")
 
-
-
-
-
+var arr3 = [1,2]
+arr3.appendContentsOf([3,4])
+arr3
 

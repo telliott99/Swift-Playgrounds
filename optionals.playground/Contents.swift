@@ -1,22 +1,30 @@
 import Cocoa
 
-let str: String?
-str = "a"
-if let x = str {
-    print(x)
-}
-str
-
-let optStr: String? = str
-// value is unwrapped!!
-optStr
-
-
 // ? is the declaration of an Optional
 let os: String? = "value"
 
 // requires an exclamation mark
 let s: String = os!
+
+
+
+let optStr: String?
+optStr = "a"
+if let x = optStr {
+    print(x)
+}
+
+let str: String? = optStr
+
+/*
+str is unwrapped!!
+if optStr were nil, the value would be nil
+everything after the ? having been ignored
+*/
+
+str
+str!
+
 
 /*
 “You can think of an implicitly unwrapped optional as giving permission for the optional to be unwrapped automatically whenever it is used.”

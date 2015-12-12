@@ -1,5 +1,7 @@
 import Foundation
 import CommonCrypto
+import Security
+
 
 // turn a password into a key with sufficient randomness
 // by key "stretching"
@@ -7,45 +9,74 @@ import CommonCrypto
 let pw = "my secret"
 let pwBytes = pw.utf8.map { Int8($0) }
 let pwLen = pwBytes.count
-// let pwData = NSData(bytes: pwBytes, length: pwLen)
-// not UInt!
+
+// Int8 not UInt8!
 let pwPointer = UnsafePointer<Int8>(pwBytes)
 
-let salt = "xyz"
-let saltBytes = salt.utf8.map { UInt8($0) }
-let saltLen = saltBytes.count
-// let saltData = NSData(bytes: saltBytes, length: saltLen)
-// not Int!
-let saltPointer = UnsafePointer<UInt8>(saltBytes)
+var salt = [UInt8](
+    count: 6,
+    repeatedValue: 0)
+let saltLen = salt.count
+
+SecRandomCopyBytes(
+    kSecRandomDefault,
+    6,
+    &salt)
+
+salt
+
+// UInt8 not Int8!
+let saltPointer = UnsafePointer<UInt8>(salt)
 
 let alg = CCPBKDFAlgorithm(kCCPBKDF2)
 let hmac = CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA1)
 let n = Int(CC_SHA1_DIGEST_LENGTH)
 n
 
-// figure out how many rounds needed for 1000ms computation time
-let rounds = CCCalibratePBKDF(alg, pwLen, saltLen, hmac, n, 1000)
+// figure out how many rounds needed 
+// for 1000ms computation time
+let rounds = CCCalibratePBKDF(
+    alg,
+    pwLen,
+    saltLen,
+    hmac,
+    n,
+    1000)
 
 // Derive the key
 
-let key = Array<UInt8>(count:Int(CC_SHA1_DIGEST_LENGTH), repeatedValue:0)
-var keyPointer = UnsafeMutablePointer<UInt8>(key)
+let key1 = Array<UInt8>(
+    count:Int(CC_SHA1_DIGEST_LENGTH),
+    repeatedValue:0)
 
 CCKeyDerivationPBKDF(
     alg,            // kCCPBKDF2
     pwPointer,
-    pwBytes.count,
+    pwLen,
     saltPointer,
-    saltBytes.count,
+    saltLen,
     hmac,           // kCCPRFHmacAlgSHA1
     rounds,
-    keyPointer,
+    UnsafeMutablePointer<UInt8>(key1),
     n)
 
-var bL: [UInt8] = []
-for i in 0..<n {
-    bL.append(keyPointer[i])
-}
+key1
 
-bL
+// try again with the *same* pw + random salt
 
+let key2 = Array<UInt8>(
+    count:Int(CC_SHA1_DIGEST_LENGTH),
+    repeatedValue:0)
+
+CCKeyDerivationPBKDF(
+    alg,            // kCCPBKDF2
+    pwPointer,
+    pwLen,
+    saltPointer,
+    saltLen,
+    hmac,           // kCCPRFHmacAlgSHA1
+    rounds,
+    UnsafeMutablePointer<UInt8>(key2),
+    n)
+
+key2

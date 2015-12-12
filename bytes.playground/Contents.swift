@@ -1,3 +1,10 @@
+import Foundation
+
+let x1 = "s".utf8.first!
+x1 is UTF8.CodeUnit
+for c in "s".utf8 { print(c) }
+
+
 // bytes are just integers 0..255
 
 // convert a single integer to hex
@@ -30,6 +37,7 @@ var data = NSData(bytes: a, length: 3)
 // UInt8 integer
 let x: UInt8 = 0b01100011
 
+/*
 // a UnicodeScalar can take a UInt8, 16 or 32
 var b = UInt32(x)
 UnicodeScalar(x)
@@ -39,6 +47,7 @@ Character(UnicodeScalar(b))
 
 String(Character(UnicodeScalar(UInt32(x))))
 String(b)
+*/
 
 //====================================
 
@@ -53,15 +62,45 @@ NSString(bytes:a, length:a.count, encoding:NSUTF8StringEncoding)
 let a3 = Array(smiley.utf16)
 NSString(bytes:a3, length:a3.count, encoding:NSUTF16StringEncoding)
 
-// NSData
-a
-let d = NSData(bytes: a, length: 3)
+// forgot I had this!!
+var b: [UInt8] = [0x60,0x61,0x62]
+b
+let d = NSData(bytes: b, length: 3)
 d.length
 
 let count = d.length/sizeof(UInt8)
 var a4 = [UInt8](count: count, repeatedValue: 0)
 d.getBytes(&a4, length:count * sizeof(UInt8))
 a4
+
+// another way:
+
+let n = 256
+let arr = Array(0..<n).map { UInt8($0) }
+
+data = NSData(bytes: arr, length: a.count)
+
+let stream = NSInputStream(data: data)
+stream.open()
+
+// allocate the memory we need
+var buffer = Array<UInt8>(count: n * sizeof(UInt8), repeatedValue: 0)
+print(buffer)
+
+
+stream.read(&buffer, maxLength: n)
+// result indicates the number of bytes read
+
+buffer
+
+stream.hasBytesAvailable
+
+// there is a leading 0 ??
+// var arr: [UInt8] = []
+let R = Array(0..<n)
+let arr2: [UInt8] = R.map { buffer[$0] }
+arr2
+
 
 //====================================
 
@@ -90,4 +129,31 @@ for (k,c) in Zip2Sequence(kA,cA) {
 }
 
 String(pA)
+
+
+
+// NSData -> BinaryData [UInt8]
+func dataToBinaryData(data: NSData) -> [UInt8] {
+    let stream = NSInputStream(data: data)
+    stream.open()
+    
+    // having loaded data from a file
+    // how to know how large a buffer we will need?
+    
+    // a total hack
+    // let n = (String(data).characters.count - 2)/2
+    let n = data.length
+    
+    var buffer = Array<UInt8>(count: n * sizeof(UInt8), repeatedValue: 0)
+    
+    stream.read(&buffer, maxLength: n)
+    return buffer
+}
+
+let a: [UInt8] = [97,98,99]
+let data = NSData(bytes: a, length: a.count)
+let a2 = dataToBinaryData(data)
+a2.count
+
+
 

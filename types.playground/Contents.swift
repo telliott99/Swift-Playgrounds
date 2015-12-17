@@ -68,6 +68,9 @@ let a2: [AnyObject] = [
     Movie(name: "Moon", director: "Duncan Jones"),
     Movie(name: "Alien", director: "Ridley Scott")]
 
+// so here we constructed the array, we know what types
+// so we are sure
+
 for object in a2 {
     let movie = object as! Movie
     print("Movie: '\(movie.name)', dir. \(movie.director)")

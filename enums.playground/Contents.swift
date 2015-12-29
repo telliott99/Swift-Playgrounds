@@ -1,3 +1,24 @@
+enum ProgrammingLanguage: String {
+    case Swift = "Swift"
+    case ObjC = "Objective-C"
+    case C = "C"
+}
+
+let lang = ProgrammingLanguage.Swift
+print("My favorite is : \(lang.rawValue)")
+
+// works with default values
+
+enum Language: String {
+    case Swift
+    case ObjC = "Objective-C"
+    case C
+}
+
+let lang2 = ProgrammingLanguage.Swift
+print("My favorite is : \(lang2)")
+
+
 enum CompassPoint {
     case North
     case South

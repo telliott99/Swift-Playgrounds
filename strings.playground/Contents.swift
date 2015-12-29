@@ -14,6 +14,7 @@ s = String(cL)
 
 print(cL, separator:".", terminator:"*")
 // C.a.t*
+// not any more!!!
 
 print("ABC",terminator:"")
 // no newline
